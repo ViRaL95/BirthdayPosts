@@ -13,12 +13,11 @@ class OAuth(object):
 
     def retrieve_access_token(self, code):
         access_token_url = "{}&code={}".format(self.host_access_token, code)
-        print(access_token_url)
         response = requests.get(access_token_url)
         response_json = response.json()
         print(response_json)
         if 'access_token' in response_json:
-	    session['access_token'] = response_json['access_token']
+            session['access_token'] = response_json['access_token']
         else:
             return "You must give the Birthday App permission in order to use it"
 

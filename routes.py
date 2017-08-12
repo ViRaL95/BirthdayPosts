@@ -1,4 +1,4 @@
-from flask import Flask, redirect, request, session
+from flask import Flask, redirect, request, session, render_template
 from oauth import OAuth
 app = Flask(__name__)
 app.secret_key = 'be00ce44e8a48addf582665368a2742f0f037313'

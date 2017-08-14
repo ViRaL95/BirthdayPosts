@@ -16,8 +16,8 @@ class FacebookRequests(object):
         seconds_since_epoch = time.mktime(current_date.timetuple())
         feed_url = "{}/me/feed".format(self.host_url)
         feed_response = requests.get(feed_url, params={"access_token": self.access_token, "fields": "from", "since": seconds_since_epoch})
-        print(feed_response.url)
         feed_json = feed_response.json()
+        pprint.pprint(feed_json)
         return feed_json['data']
     
     def post_comments(self, feed, name):
@@ -34,7 +34,6 @@ class FacebookRequests(object):
     def retrieve_name(self):
         name_url = "{}/me".format(self.host_url)
         response = requests.get(name_url, params={"access_token": self.access_token})
-        print(response.json())
         name = response.json()["name"]
         return name
 

@@ -31,5 +31,11 @@ class FacebookRequests(object):
                 response =  requests.post(comments_url, params={"access_token": self.access_token, "message": comment})
                 pprint.pprint(response.json())
         
+    def retrieve_name(self):
+        name_url = "{}/me".format(self.host_url)
+        response = requests.get(name_url, params={"access_token": self.access_token})
+        print(response.json())
+        name = response.json()["name"]
+        return name
 
 

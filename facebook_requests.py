@@ -5,8 +5,8 @@ import time
 import datetime
 
 class FacebookRequests(object):
-    def __init__(self):
-        self.access_token = session['access_token']
+    def __init__(self, access_token):
+        self.access_token = access_token       
         self.host_url = "https://graph.facebook.com/v2.8"
 
     def retrieve_feed(self):
@@ -20,11 +20,16 @@ class FacebookRequests(object):
         feed_json = feed_response.json()
         return feed_json['data']
     
-    def post_comments(feed, comment):
+    def post_comments(self, feed, name):
         for post in feed:
-            post_id = post['id']
-            comments_url= "{}/{}/comments".format(self.host_url, post_id)
-            requests.post(comments_url, params={"access_token": self.access_token, "message": comment})
+            pprint.pprint(post)
+            id_post = post['id']
+            creator_of_post = post['from']['name']
+            comments_url= "{}/{}/comments".format(self.host_url, id_post)
+            if creator_of_post != name:
+                comment = "Thanks " + creator_of_post + "!"
+                response =  requests.post(comments_url, params={"access_token": self.access_token, "message": comment})
+                pprint.pprint(response.json())
         
 
 

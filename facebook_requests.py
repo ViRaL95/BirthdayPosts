@@ -1,5 +1,8 @@
 from flask import session
 import requests
+import pprint
+import time
+import datetime
 
 class FacebookRequests(object):
     def __init__(self):
@@ -7,11 +10,13 @@ class FacebookRequests(object):
         self.host_url = "https://graph.facebook.com/v2.8"
 
     def retrieve_feed(self):
-        feed_id = "{}/me".format(self.host_url)
-        feed_id_response = requests.get(feed_id, params={"access_token": self.access_token}).json()
-        print(feed_id_response)
+        current_date_parameters = time.strftime("%Y %m %d", time.localtime())
+        (year, month, date) = current_date_parameters.split(" ")
+        current_date = datetime.datetime(int(year), int(month), int(date))
+        seconds_since_epoch = time.mktime(current_date.timetuple())
         feed_url = "{}/me/feed".format(self.host_url)
-        feed_response = requests.get(feed_url, params={"access_token": self.access_token})
+        feed_response = requests.get(feed_url, params={"access_token": self.access_token, "fields": "from", "since": seconds_since_epoch})
+        print(feed_response.url)
         feed_json = feed_response.json()
         return feed_json['data']
     

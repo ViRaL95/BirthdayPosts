@@ -10,6 +10,13 @@ class FacebookRequests(object):
         self.host_url = "https://graph.facebook.com/v2.8"
 
     def retrieve_feed(self):
+        """This method essentially finds out the current date and the time in seconds since epoch till that
+        date. It then queries the user's facebook feed with this data, and also retrieves who each wallpost
+        is from.
+        
+        Returns:
+            feed_json ['data'] (list): A list of dictionaries, with each dictionary being a post on the user's wall
+        """
         current_date_parameters = time.strftime("%Y %m %d", time.localtime())
         (year, month, date) = current_date_parameters.split(" ")
         current_date = datetime.datetime(int(year), int(month), int(date))

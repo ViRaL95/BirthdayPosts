@@ -35,12 +35,14 @@ class FacebookRequests(object):
             birthday_boy_or_girl (dict): The name and the id of the current user
         """
         for post in feed:
+            name = birthday_boy_or_girl['name']
+            id = birthday_boy_or_girl['id']
             pprint.pprint(post)
             id_post = post['id']
-            creator_of_post = post['from']['name']
+            creator_of_post = post['from']['id']
             comments_url= "{}/{}/comments".format(self.host_url, id_post)
-            if creator_of_post != name:
-                comment = "Thanks " + creator_of_post + "!"
+            if creator_of_post != id:
+                comment = "Thanks " + post['from']['name'] + "!"
                 response =  requests.post(comments_url, params={"access_token": self.access_token, "message": comment})
                 pprint.pprint(response.json())
         

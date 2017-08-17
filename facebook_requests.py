@@ -1,4 +1,3 @@
-from flask import session
 import requests
 import pprint
 import time

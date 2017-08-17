@@ -3,7 +3,6 @@ import sys
 
 def control():
     access_token = sys.argv[1]
-    print (access_token)
     facebook = FacebookRequests(access_token)
     birthday_boy_or_girl = facebook.retrieve_birthday_boy_or_girl()
     feed = facebook.retrieve_feed()

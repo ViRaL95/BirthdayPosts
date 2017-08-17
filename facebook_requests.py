@@ -24,7 +24,6 @@ class FacebookRequests(object):
         feed_url = "{}/me/feed".format(self.host_url)
         feed_response = requests.get(feed_url, params={"access_token": self.access_token, "fields": "from", "since": seconds_since_epoch})
         feed_json = feed_response.json()
-        pprint.pprint(feed_json)
         return feed_json['data']
     
     def post_comments(self, feed, birthday_boy_or_girl):

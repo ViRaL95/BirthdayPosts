@@ -3,6 +3,8 @@ import pprint
 import time
 import logging
 import datetime
+from exceptions import EmptyFeedException, RequestException
+
 
 class FacebookRequests(object):
     def __init__(self, access_token):

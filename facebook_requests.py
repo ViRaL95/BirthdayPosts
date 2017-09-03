@@ -29,7 +29,7 @@ class FacebookRequests(object):
         feed_response = requests.get(feed_url, params={"access_token": self.access_token, "fields": "from", "since": seconds_since_epoch})
         self.check_response(feed_response)
         feed_json = feed_response.json()
-        return feed_json['data']
+        return feed_json
     
     def check_response(self, response):
         """This method essentially checks if the response returned from a request to the FB graph api

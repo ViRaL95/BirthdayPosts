@@ -18,11 +18,12 @@ class FacebookRequests(object):
         is from.
         
         Returns:
-            feed_json ['data'] (list): A list of dictionaries, with each dictionary being a post on the user's wall
+            feed_json (dict): A dictionary containing the feed
         """
-        current_date_parameters = time.strftime("%Y %m %d", time.localtime())
-        (year, month, date) = current_date_parameters.split(" ")
-        current_date = datetime.datetime(int(year), int(month), int(date))
+        gm_date_parameters = time.strftime("%Y %m %d", time.gmtime())
+        local_time_parameters = time.strftime("%Y %m %d", time.localtime())
+        (local_year, local_month, local_date) = local_time_parameters.split(" ")
+        current_date = datetime.datetime(int(local_year), int(local_month), int(local_date))
         seconds_since_epoch = time.mktime(current_date.timetuple())
         feed_url = "{}/me/feed".format(self.host_url)
         feed_response = requests.get(feed_url, params={"access_token": self.access_token, "fields": "from", "since": seconds_since_epoch})
@@ -49,24 +50,41 @@ class FacebookRequests(object):
         Args:
             feed (list): A list of dictionaries, with each dictionary being a post on the user's wall
             birthday_boy_or_girl (dict): The name and the id of the current user
+
+        Raises:
+            EmptyFeedException(Exception): An exception that is raised when the feed recieved is empty
         """
-        for post in feed:
-            name = birthday_boy_or_girl['name']
-            id = birthday_boy_or_girl['id']
-            pprint.pprint(post)
-            id_post = post['id']
-            creator_of_post = post['from']['id']
-            comments_url= "{}/{}/comments".format(self.host_url, id_post)
-            if creator_of_post != id:
-                comment = "Thanks " + post['from']['name'] + "!"
-                response =  requests.post(comments_url, params={"access_token": self.access_token, "message": comment})
-                pprint.pprint(response.json())
-        
+        if feed['data'] == []:
+            raise EmptyFeedException(message="Empty Feed")
+        current_page = True
+        while (current_page):
+            if feed['data']:
+                for post in feed['data']:
+                    logging.info("POST IS ", post)
+                    name = birthday_boy_or_girl['name']
+                    id = birthday_boy_or_girl['id']
+                    id_post = post['id']
+                    creator_of_post = post['from']['id']
+                    comments_url= "{}/{}/comments".format(self.host_url, id_post)
+                    if creator_of_post != id:
+                        comment = "Thanks " + post['from']['name'] + "!"
+                        response =  requests.post(comments_url, params={"access_token": self.access_token, "message": comment})
+                        self.check_response(response)
+                if 'paging' in feed and 'next' in feed['paging']:
+                    feed_request = requests.get(feed['paging']['next'])
+                    self.check_response(feed_request)
+                    feed = feed_request.json()
+                    current_page = True
+                else:
+                    current_page = False
+            else:
+                current_page = False
+
     def retrieve_birthday_boy_or_girl(self):
         """Retrieve the id and the name of the user with the access_token. I guess you can say this could be 
         either a birthday boy or a birthday girl
-       
-        Return:
+
+        Returns:
             birthday_boy_or_girl (dict): The name and the id of the user with the access token
         """
         name_url = "{}/me".format(self.host_url)

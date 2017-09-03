@@ -1,10 +1,12 @@
 import requests
 import pprint
 import time
+import logging
 import datetime
 
 class FacebookRequests(object):
     def __init__(self, access_token):
+        logging.basicConfig(level=logging.INFO)
         self.access_token = access_token       
         self.host_url = "https://graph.facebook.com/v2.8"
 
@@ -56,5 +58,6 @@ class FacebookRequests(object):
         name_url = "{}/me".format(self.host_url)
         response = requests.get(name_url, params={"access_token": self.access_token})
         birthday_boy_or_girl = response.json()
+        logging.info("USER INFO IS %s", birthday_boy_or_girl)
         return birthday_boy_or_girl
 

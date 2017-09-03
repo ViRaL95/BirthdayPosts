@@ -26,9 +26,21 @@ class FacebookRequests(object):
         seconds_since_epoch = time.mktime(current_date.timetuple())
         feed_url = "{}/me/feed".format(self.host_url)
         feed_response = requests.get(feed_url, params={"access_token": self.access_token, "fields": "from", "since": seconds_since_epoch})
+        self.check_response(feed_response)
         feed_json = feed_response.json()
         return feed_json['data']
     
+    def check_response(self, response):
+        """This method essentially checks if the response returned from a request to the FB graph api
+        is a 200 or not. If it isnt an exception is raised
+
+        Raises:
+            RequestException (Exception): An exception that is raised when a request was not made to the FB graph api properly
+        """
+        if not response.ok:
+            logging.info("Something went wrong while making a request to FB Graph API %s", response.json())
+            raise RequestException("Request was not made to the facebook graph api")
+
     def post_comments(self, feed, birthday_boy_or_girl):
         """This method iterates through each post in the feed, checks if the creator of each post is the 
         currently logged in user (ignores this json if it is), and then posts a Thank you message to the 
@@ -59,6 +71,7 @@ class FacebookRequests(object):
         """
         name_url = "{}/me".format(self.host_url)
         response = requests.get(name_url, params={"access_token": self.access_token})
+        self.check_response(response)
         birthday_boy_or_girl = response.json()
         logging.info("USER INFO IS %s", birthday_boy_or_girl)
         return birthday_boy_or_girl
